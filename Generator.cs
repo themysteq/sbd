@@ -43,24 +43,8 @@ namespace SBD_siszarp
                 char znak = '\0';
                 int enabledBitsCount = m_keys[i];
 
-                if ( enabledBitsCount > 8 ) //bo w char maksymalnie mamy 8 jedynek
-                {
+                record = Generator.enabledBitsToCharRecord(enabledBitsCount);
 
-                    znak = Convert.ToChar(255);
-
-                }
-                else
-                {
-
-                    znak = Convert.ToChar(m_amount);
-                }
-                /*
-                record[0] = m_keys[i];
-                for (int x = 1; x < 10; x++)
-                {
-                    record[x] = '\0';
-                }
-                 * */
                 this._write_buf.writeRecord(record);
             }
             this._write_buf.Close();
@@ -129,6 +113,43 @@ namespace SBD_siszarp
         public int getWrites()
         {
             return this._write_buf.getWrites();
+        }
+
+        static public char[] enabledBitsToCharRecord(int _enabledBitsCount)
+        {
+            const int RECORD_LENGTH = 10; //no dlugosc rekordu
+            char[] _new_record = new char[RECORD_LENGTH];
+            char singleCharToInsert = '\0';
+            int enabledBitsRemain = _enabledBitsCount;
+            int howManyEnabledBitsForSingleChar = 0;
+            for (int elementIter = 0; elementIter < 10; elementIter++)
+            {
+                if (enabledBitsRemain > 8)
+                {
+                    enabledBitsRemain -= 8;
+                    singleCharToInsert = Convert.ToChar(255);
+                }
+                else
+                {
+                    // jesli mamy mniej niz 9 jedynek to zmiesci sie to w jednym bajcie 
+
+                    howManyEnabledBitsForSingleChar = enabledBitsRemain;
+                    enabledBitsRemain -= howManyEnabledBitsForSingleChar;
+                    if (enabledBitsRemain > 0)
+                    {
+                        singleCharToInsert = Convert.ToChar(Math.Pow(2.0, howManyEnabledBitsForSingleChar));
+                    }
+                    else
+                    {
+                        singleCharToInsert = Convert.ToChar(0);
+                    }
+
+                }
+                _new_record[elementIter] = singleCharToInsert;
+            }
+
+            return _new_record;
+
         }
         
     }
