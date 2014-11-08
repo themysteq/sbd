@@ -150,25 +150,24 @@ namespace SBD_siszarp
         static public byte getByteFromEnabledBitsCounter(int _enabledBits)
         {
             byte myByte = (byte)0x00;
-            byte tempByte  = (byte)0x00;
+            byte tempByte = (byte)0x00;
             if (_enabledBits == 0)
             {
                 return myByte;
             }
-            
+
             myByte = (byte)0x01;
-            /*
-            for (int i = 0 ; i < _enabledBits; i++)
+
+            if (_enabledBits == 1) return myByte;
+
+
+            for (int i = 0; i < _enabledBits - 1; i++)
             {
                 tempByte = myByte;
                 myByte = (byte)(myByte << 1 | tempByte);
-                
+
             }
-             * */
-            /*
-             * Abusrd testowy ponizej:
-             * */
-            myByte = 0xCA;
+
             return myByte;
         }
         
