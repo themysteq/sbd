@@ -94,7 +94,7 @@ namespace SBD_siszarp
         }
         static public int getMeta(char[] m_record)
         {
-            // trzeba dopisać nową implementację 
+            // trzeba dopisać nową implementację  G
             int _sum = 0;
             for (int i = 0; i < 10; i++)
             {
