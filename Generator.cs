@@ -28,6 +28,44 @@ namespace SBD_siszarp
             this._write_buf = new WriteBuffer(m_filename);
 
         }
+
+        static public char[] enabledBitsToCharRecord(int _enabledBitsCount)
+        {
+            const int RECORD_LENGTH = 10; //no dlugosc rekordu
+            char[] _new_record = new char[RECORD_LENGTH];
+            char singleCharToInsert = '\0';
+            int enabledBitsRemain = _enabledBitsCount;
+            int howManyEnabledBitsForSingleChar = 0;
+            for (int elementIter = 0; elementIter < 10; elementIter++)
+            {
+                if (enabledBitsRemain > 8)
+                {
+                    enabledBitsRemain -= 8;
+                    singleCharToInsert = Convert.ToChar(255);
+                }
+                else
+                {
+                    // jesli mamy mniej niz 9 jedynek to zmiesci sie to w jednym bajcie 
+
+                    howManyEnabledBitsForSingleChar = enabledBitsRemain;
+                    
+                    if (enabledBitsRemain > 0)
+                    {
+                        singleCharToInsert = (char)Generator.getByteFromEnabledBitsCounter(howManyEnabledBitsForSingleChar);
+                    }
+                    else
+                    {
+                        singleCharToInsert = Convert.ToChar(0);
+                    }
+                    enabledBitsRemain -= howManyEnabledBitsForSingleChar;
+
+                }
+                _new_record[elementIter] = singleCharToInsert;
+            }
+
+            return _new_record;
+
+        }
         public void generateManualy(int m_amount, int [] m_keys)
         {
             this._write_buf.Close();
@@ -43,7 +81,7 @@ namespace SBD_siszarp
                 char znak = '\0';
                 int enabledBitsCount = m_keys[i];
 
-                record = Generator.enabledBitsToCharRecord(enabledBitsCount);
+                record = Generator.enabledBitsToCharRecord( enabledBitsCount );
 
                 this._write_buf.writeRecord(record);
             }
@@ -60,11 +98,7 @@ namespace SBD_siszarp
                 //rosnąco generuj
                 for (int i = m_min; i < m_max; i++)
                 {
-                    record[0] = Convert.ToChar(i);
-                    for (int x = 1; x < 10; x++)
-                    {
-                        record[x] = '\0';
-                    }
+                    record = Generator.enabledBitsToCharRecord(i);
                 this._write_buf.writeRecord(record);
                 }
             }
@@ -73,12 +107,9 @@ namespace SBD_siszarp
                 //malejąco generuj
                 for (int i = m_min; i > m_max; i--)
                 {
-                    record[0] = Convert.ToChar(i);
-                    for (int x = 1; x < 10; x++)
-                    {
-                        record[x] = '\0';
-                    }
+                    record = Generator.enabledBitsToCharRecord(i);
                     this._write_buf.writeRecord(record);
+                    
                 }
 
             }
@@ -115,41 +146,30 @@ namespace SBD_siszarp
             return this._write_buf.getWrites();
         }
 
-        static public char[] enabledBitsToCharRecord(int _enabledBitsCount)
+
+        static public byte getByteFromEnabledBitsCounter(int _enabledBits)
         {
-            const int RECORD_LENGTH = 10; //no dlugosc rekordu
-            char[] _new_record = new char[RECORD_LENGTH];
-            char singleCharToInsert = '\0';
-            int enabledBitsRemain = _enabledBitsCount;
-            int howManyEnabledBitsForSingleChar = 0;
-            for (int elementIter = 0; elementIter < 10; elementIter++)
+            byte myByte = (byte)0x00;
+            byte tempByte  = (byte)0x00;
+            if (_enabledBits == 0)
             {
-                if (enabledBitsRemain > 8)
-                {
-                    enabledBitsRemain -= 8;
-                    singleCharToInsert = Convert.ToChar(255);
-                }
-                else
-                {
-                    // jesli mamy mniej niz 9 jedynek to zmiesci sie to w jednym bajcie 
-
-                    howManyEnabledBitsForSingleChar = enabledBitsRemain;
-                    enabledBitsRemain -= howManyEnabledBitsForSingleChar;
-                    if (enabledBitsRemain > 0)
-                    {
-                        singleCharToInsert = Convert.ToChar(Math.Pow(2.0, howManyEnabledBitsForSingleChar));
-                    }
-                    else
-                    {
-                        singleCharToInsert = Convert.ToChar(0);
-                    }
-
-                }
-                _new_record[elementIter] = singleCharToInsert;
+                return myByte;
             }
-
-            return _new_record;
-
+            
+            myByte = (byte)0x01;
+            /*
+            for (int i = 0 ; i < _enabledBits; i++)
+            {
+                tempByte = myByte;
+                myByte = (byte)(myByte << 1 | tempByte);
+                
+            }
+             * */
+            /*
+             * Abusrd testowy ponizej:
+             * */
+            myByte = 0xCA;
+            return myByte;
         }
         
     }
