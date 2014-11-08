@@ -94,11 +94,13 @@ namespace SBD_siszarp
         }
         static public int getMeta(char[] m_record)
         {
-            // trzeba dopisać nową implementację  G
+            // trzeba dopisać nową implementację. liczymy 
             int _sum = 0;
+            int count = 0;
             for (int i = 0; i < 10; i++)
             {
-                _sum += m_record[i];
+                count = Convert.ToString(m_record[i], 2).ToCharArray().Count(c => c == '1');
+                _sum += count;
             }
             return _sum;
         }
@@ -135,6 +137,40 @@ namespace SBD_siszarp
         public int getSeries()
         {
             return this._series;
+        }
+        static public char[] enabledBitsToCharRecord(int _enabledBitsCount)
+        {
+            const int RECORD_LENGTH = 10; //no dlugosc rekordu
+            char[] _new_record = new char[RECORD_LENGTH];
+            char singleCharToInsert = '\0';
+            int enabledBitsRemain = _enabledBitsCount;
+            int howManyEnabledBitsForSingleChar = 0;
+            for(int elementIter = 0; elementIter < 10; elementIter++)
+            {
+                if (enabledBitsRemain > 8 ) {
+                enabledBitsRemain -= 8;
+                singleCharToInsert = Convert.ToChar(255);
+                }
+                else {
+                    // jesli mamy mniej niz 9 jedynek to zmiesci sie to w jednym bajcie 
+
+                    howManyEnabledBitsForSingleChar = enabledBitsRemain;
+                    enabledBitsRemain -= howManyEnabledBitsForSingleChar;
+                    if( enabledBitsRemain > 0)
+                        {
+                            singleCharToInsert = Convert.ToChar(Math.Pow(2.0, howManyEnabledBitsForSingleChar));
+                        }
+                    else
+                        {
+                            singleCharToInsert = Convert.ToChar(0);
+                        }
+                        
+                    }
+                _new_record[elementIter] = singleCharToInsert;
+            }
+
+            return _new_record;
+
         }
     }
 }

@@ -28,18 +28,39 @@ namespace SBD_siszarp
             this._write_buf = new WriteBuffer(m_filename);
 
         }
-        public void generateManualy(int m_amount, char [] m_keys)
+        public void generateManualy(int m_amount, int [] m_keys)
         {
             this._write_buf.Close();
             this._write_buf.Open();
             char[] record = new char[10];
             for (int i = 0; i < m_amount; i++)
             {
+
+                /* tutaj potrzebujemy takiej generacji, która będzie agresywnie pochłaniała ilość bitów == 1
+                 * Np. jesli mamy rekord o wartości 12 to pierwszy znak bedzie mial 8 bitow == 1 a kolejny 4.
+                 * nastepne po 0 'jedynek'  czyli beda nullbyte'ami.
+                 */
+                char znak = '\0';
+                int enabledBitsCount = m_keys[i];
+
+                if ( enabledBitsCount > 8 ) //bo w char maksymalnie mamy 8 jedynek
+                {
+
+                    znak = Convert.ToChar(255);
+
+                }
+                else
+                {
+
+                    znak = Convert.ToChar(m_amount);
+                }
+                /*
                 record[0] = m_keys[i];
                 for (int x = 1; x < 10; x++)
                 {
                     record[x] = '\0';
                 }
+                 * */
                 this._write_buf.writeRecord(record);
             }
             this._write_buf.Close();

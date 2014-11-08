@@ -131,7 +131,7 @@ namespace SBD_siszarp
           
                 Tape read_tape = new Tape(_filename);
                 int x = 0;
-                int[] rekord = read_tape.getRekord();
+                char[] rekord = read_tape.getRekord();
                 while (rekord != null)
                 {
                     x++;
@@ -151,7 +151,7 @@ namespace SBD_siszarp
           write_tapes[1] = new Tape(_tapes_string[2], false);
 
           //pobierz pierwszy rekord
-          int[] rekord = read_tape.getRekord();
+          char[] rekord = read_tape.getRekord();
 
           //jeśli nic nie pobrałeś to taśma pusta, zakończ
           if (rekord == null)
@@ -201,7 +201,7 @@ namespace SBD_siszarp
           /*** holder dla każdej z dwóch taśm wejściowych
            * Przetrzymuje jeden pobrany rekord po bezpośrednim odczycie z taśmy
            * ***/
-          int[][] temp_record = new int[2][];
+          char[][] temp_record = new char[2][];
           int current_tape = 0;
 
           //póki obydwie taśmy wejściowe się nie skończyły to możemy odczytywać i złączać
